@@ -21,7 +21,12 @@ uv --version  # para ver la version actual uv
 uv --help     #para ver el contenido del gestor uv
 
 uv init       # inicializando el entorno
+```
+1.3 Instalando Flask
 
+```bash
+uv add Flask                   # Añadiendo flask
+uv run flask --app main run    # activando servidor
 
 ```
 
