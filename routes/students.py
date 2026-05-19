@@ -143,12 +143,12 @@ def delete_student(student_id):
 # 6. Creación masiva / Bulk insert con (POST /students/bulk)
 
 @students_bp.route("/students/bulk", methods=["POST"])             # Definimos la ruta para crear múltiples estudiantes a la vez utilizando el método POST
-def bulk_insert_students():
+def bulk_insert_students():                                     # Obtenemos el cuerpo de la solicitud como JSON y verificamos que sea una lista de estudiantes
     data = request.get_json()
     if not isinstance(data, list):
         return jsonify({"error": "El cuerpo debe ser una lista"}), 400
 
-    conn = get_db_connection()
+    conn = get_db_connection()                                  # Obtenemos la conexión a la base de datos
     cur = conn.cursor()
     inserted_count = 0
     try:
@@ -200,4 +200,4 @@ def get_students_html_table():
     cur = conn.cursor()
     cur.execute("SELECT * FROM students")
     rows = cur.fetchall()
-    return render_template("partials/students_table.html", student_list=rows)
+    return render_template("partials/students_table.html", student_list=rows) # Renderizamos la plantilla HTML "students_table.html" y le pasamos la lista de estudiantes obtenida de la base de datos para que se muestre en la tabla
