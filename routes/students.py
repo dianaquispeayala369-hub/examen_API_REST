@@ -24,7 +24,7 @@ def serialize_student(row): # Función para convertir una fila de la base de dat
 # 1. Creando un estudiante con (POST /students)
 
 
-@students_bp.route("/students", methods=["POST"])
+@students_bp.route("/students", methods=["POST"]) # Definimos la ruta para crear un nuevo estudiante utilizando el método POST
 def create_student():
     data = request.get_json() or {}
     if (
@@ -58,7 +58,7 @@ def create_student():
 
 # 2. Obtener todos los estudiantes con (GET /students)
 
-@students_bp.route("/students", methods=["GET"])
+@students_bp.route("/students", methods=["GET"]) # Definimos la ruta para obtener la lista de todos los estudiantes utilizando el método GET
 def get_all_students():
     conn = get_db_connection()
     cur = conn.cursor()
@@ -68,7 +68,8 @@ def get_all_students():
 
 
 # 3. Obtener un estudiante por ID con (GET /students/<id>)
-@students_bp.route("/students/<int:student_id>", methods=["GET"])
+
+@students_bp.route("/students/<int:student_id>", methods=["GET"]) # Definimos la ruta para obtener un estudiante específico por su ID utilizando el método GET
 def get_student_by_id(student_id):
     conn = get_db_connection()
     cur = conn.cursor()
@@ -80,7 +81,7 @@ def get_student_by_id(student_id):
 
 
 # 4. Actualizar un estudiante con (PUT/PATCH /students/<id>)
-@students_bp.route("/students/<int:student_id>", methods=["PUT", "PATCH"])
+@students_bp.route("/students/<int:student_id>", methods=["PUT", "PATCH"])  # Definimos la ruta para actualizar un estudiante específico por su ID utilizando los métodos PUT o PATCH
 def update_student(student_id):
     data = request.get_json() or {}
     conn = get_db_connection()
@@ -126,7 +127,7 @@ def update_student(student_id):
 
 # 5. Eliminar un estudiante con (DELETE /students/<id>)
 
-@students_bp.route("/students/<int:student_id>", methods=["DELETE"])
+@students_bp.route("/students/<int:student_id>", methods=["DELETE"])  # Definimos la ruta para eliminar un estudiante específico por su ID utilizando el método DELETE
 def delete_student(student_id):
     conn = get_db_connection()
     cur = conn.cursor()
@@ -141,7 +142,7 @@ def delete_student(student_id):
 
 # 6. Creación masiva / Bulk insert con (POST /students/bulk)
 
-@students_bp.route("/students/bulk", methods=["POST"])
+@students_bp.route("/students/bulk", methods=["POST"])             # Definimos la ruta para crear múltiples estudiantes a la vez utilizando el método POST
 def bulk_insert_students():
     data = request.get_json()
     if not isinstance(data, list):
@@ -181,7 +182,7 @@ def bulk_insert_students():
 
 # 7. Promedio de notas con (GET /students/average)
 
-@students_bp.route("/students/average", methods=["GET"])
+@students_bp.route("/students/average", methods=["GET"])       # Definimos la ruta para obtener el promedio de las notas de todos los estudiantes utilizando el método GET
 def get_students_average():
     conn = get_db_connection()
     cur = conn.cursor()
@@ -193,7 +194,7 @@ def get_students_average():
 
 # 8. Renderizar tabla HTMX (GET /students/table)
 
-@students_bp.route("/students/table", methods=["GET"])
+@students_bp.route("/students/table", methods=["GET"])           # Definimos la ruta para renderizar una tabla HTML con la lista de estudiantes utilizando el método GET
 def get_students_html_table():
     conn = get_db_connection()
     cur = conn.cursor()
