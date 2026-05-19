@@ -22,16 +22,21 @@ uv --help     #para ver el contenido del gestor uv
 
 uv init       # inicializando el entorno
 ```
-1.3 Instalando Flask
+2. Configuracion del entorno
 
 ```bash
-uv add Flask                   # Añadiendo flask
-uv run flask --app main run    # activando servidor
+python -m venv .venv.
 
-# OPCIONAL, inicializando desde la terminal de VS code
-
-source /c/py/examen_API_REST/.venv/Scripts/activate
-uv run flask --app main.py run --debug
+# Activando en git bash
+source .venv/Scripts/activate
 ```
+3. Instalar los modulos necesarios
 
+```bash
+pip install flask jinja2
+```
+4. Ejecutar API
 
+```bash
+python main.py
+```

@@ -20,4 +20,4 @@ if __name__ == "__main__":
         init_db(app)
         print("Base de datos 'students.db' creada e inicializada.")
         
-    app.run(debug=True, port=5000)
+    app.run(debug=True, port=5005)
