@@ -1,9 +1,12 @@
+# Importando librerias necesarias
+
 from flask import Blueprint, request, jsonify, render_template
 from database.connection import get_db_connection
 import sqlite3
 from datetime import datetime
 
 students_bp = Blueprint("students", __name__)
+
 
 def serialize_student(row):
     return {
@@ -14,14 +17,23 @@ def serialize_student(row):
         "grade": row["grade"],
         "is_approved": bool(row["is_approved"]),
         "created_at": row["created_at"],
-        "updated_at": row["updated_at"]
+        "updated_at": row["updated_at"],
     }
 
-# 1. Crear un estudiante (POST /students)
+
+# 1. Creando un estudiante con (POST /students)
+
+
 @students_bp.route("/students", methods=["POST"])
 def create_student():
     data = request.get_json() or {}
-    if not data.get("dni") or not data.get("name") or data.get("age") is None or data.get("grade") is None or data.get("is_approved") is None:
+    if (
+        not data.get("dni")
+        or not data.get("name")
+        or data.get("age") is None
+        or data.get("grade") is None
+        or data.get("is_approved") is None
+    ):
         return jsonify({"error": "Faltan campos obligatorios"}), 400
 
     conn = get_db_connection()
@@ -29,7 +41,13 @@ def create_student():
     try:
         cur.execute(
             "INSERT INTO students (dni, name, age, grade, is_approved) VALUES (?, ?, ?, ?, ?)",
-            (data["dni"], data["name"], int(data["age"]), float(data["grade"]), bool(data["is_approved"]))
+            (
+                data["dni"],
+                data["name"],
+                int(data["age"]),
+                float(data["grade"]),
+                bool(data["is_approved"]),
+            ),
         )
         conn.commit()
         cur.execute("SELECT * FROM students WHERE id = ?", (cur.lastrowid,))
@@ -37,7 +55,9 @@ def create_student():
     except sqlite3.IntegrityError:
         return jsonify({"error": "El DNI ya se encuentra registrado"}), 400
 
-# 2. Obtener todos los estudiantes (GET /students)
+
+# 2. Obtener todos los estudiantes con (GET /students)
+
 @students_bp.route("/students", methods=["GET"])
 def get_all_students():
     conn = get_db_connection()
@@ -46,7 +66,8 @@ def get_all_students():
     rows = cur.fetchall()
     return jsonify([serialize_student(row) for row in rows]), 200
 
-# 3. Obtener un estudiante por ID (GET /students/<id>)
+
+# 3. Obtener un estudiante por ID con (GET /students/<id>)
 @students_bp.route("/students/<int:student_id>", methods=["GET"])
 def get_student_by_id(student_id):
     conn = get_db_connection()
@@ -57,18 +78,19 @@ def get_student_by_id(student_id):
         return jsonify({"error": "Estudiante no encontrado"}), 404
     return jsonify(serialize_student(row)), 200
 
-# 4. Actualizar un estudiante (PUT/PATCH /students/<id>)
+
+# 4. Actualizar un estudiante con (PUT/PATCH /students/<id>)
 @students_bp.route("/students/<int:student_id>", methods=["PUT", "PATCH"])
 def update_student(student_id):
     data = request.get_json() or {}
     conn = get_db_connection()
     cur = conn.cursor()
-    
+
     cur.execute("SELECT * FROM students WHERE id = ?", (student_id,))
     student = cur.fetchone()
     if student is None:
         return jsonify({"error": "Estudiante no encontrado"}), 404
-    
+
     dni = data.get("dni", student["dni"])
     name = data.get("name", student["name"])
     age = data.get("age", student["age"])
@@ -77,18 +99,33 @@ def update_student(student_id):
     current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     try:
-        cur.execute("""
+        cur.execute(
+            """
             UPDATE students 
             SET dni = ?, name = ?, age = ?, grade = ?, is_approved = ?, updated_at = ?
             WHERE id = ?
-        """, (dni, name, int(age), float(grade), bool(is_approved), current_time, student_id))
+        """,
+            (
+                dni,
+                name,
+                int(age),
+                float(grade),
+                bool(is_approved),
+                current_time,
+                student_id,
+            ),
+        )
         conn.commit()
         cur.execute("SELECT * FROM students WHERE id = ?", (student_id,))
         return jsonify(serialize_student(cur.fetchone())), 200
     except sqlite3.IntegrityError:
-        return jsonify({"error": "No se pudo actualizar. El DNI ya pertenece a otro estudiante"}), 400
+        return jsonify(
+            {"error": "No se pudo actualizar. El DNI ya pertenece a otro estudiante"}
+        ), 400
 
-# 5. Eliminar un estudiante (DELETE /students/<id>)
+
+# 5. Eliminar un estudiante con (DELETE /students/<id>)
+
 @students_bp.route("/students/<int:student_id>", methods=["DELETE"])
 def delete_student(student_id):
     conn = get_db_connection()
@@ -96,36 +133,53 @@ def delete_student(student_id):
     cur.execute("SELECT * FROM students WHERE id = ?", (student_id,))
     if cur.fetchone() is None:
         return jsonify({"error": "Estudiante no encontrado"}), 404
-        
+
     cur.execute("DELETE FROM students WHERE id = ?", (student_id,))
     conn.commit()
     return jsonify({"message": f"Estudiante con ID {student_id} eliminado"}), 200
 
-# 6. Creación masiva / Bulk insert (POST /students/bulk)
+
+# 6. Creación masiva / Bulk insert con (POST /students/bulk)
 @students_bp.route("/students/bulk", methods=["POST"])
 def bulk_insert_students():
     data = request.get_json()
     if not isinstance(data, list):
         return jsonify({"error": "El cuerpo debe ser una lista"}), 400
-        
+
     conn = get_db_connection()
     cur = conn.cursor()
     inserted_count = 0
     try:
         for item in data:
-            if not item.get("dni") or not item.get("name") or item.get("age") is None or item.get("grade") is None or item.get("is_approved") is None:
+            if (
+                not item.get("dni")
+                or not item.get("name")
+                or item.get("age") is None
+                or item.get("grade") is None
+                or item.get("is_approved") is None
+            ):
                 continue
             cur.execute(
                 "INSERT INTO students (dni, name, age, grade, is_approved) VALUES (?, ?, ?, ?, ?)",
-                (item["dni"], item["name"], int(item["age"]), float(item["grade"]), bool(item["is_approved"]))
+                (
+                    item["dni"],
+                    item["name"],
+                    int(item["age"]),
+                    float(item["grade"]),
+                    bool(item["is_approved"]),
+                ),
             )
             inserted_count += 1
         conn.commit()
-        return jsonify({"message": f"Bulk insert completado. {inserted_count} agregados."}), 201
+        return jsonify(
+            {"message": f"Bulk insert completado. {inserted_count} agregados."}
+        ), 201
     except sqlite3.IntegrityError:
         return jsonify({"error": "Error de duplicidad de DNI en la lista masiva"}), 400
 
-# 7. Promedio de notas (GET /students/average)
+
+# 7. Promedio de notas con (GET /students/average)
+
 @students_bp.route("/students/average", methods=["GET"])
 def get_students_average():
     conn = get_db_connection()
@@ -135,7 +189,9 @@ def get_students_average():
     promedio = result["promedio"] if result["promedio"] is not None else 0.0
     return jsonify({"average_grade": round(promedio, 2)}), 200
 
+
 # 8. Renderizar tabla HTMX (GET /students/table)
+
 @students_bp.route("/students/table", methods=["GET"])
 def get_students_html_table():
     conn = get_db_connection()
