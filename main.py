@@ -1,4 +1,3 @@
-
 from flask import Flask, render_template
 from database.connection import close_db_connection, init_db
 from routes.students import students_bp
@@ -19,6 +18,6 @@ def index():
 if __name__ == "__main__":
     if not os.path.exists("students.db"):
         init_db(app)
-        print("📁 Base de datos 'students.db' creada e inicializada.")
+        print("Base de datos 'students.db' creada e inicializada.")
         
     app.run(debug=True, port=5000)
