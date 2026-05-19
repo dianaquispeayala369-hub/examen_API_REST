@@ -25,8 +25,8 @@ def serialize_student(row): # Función para convertir una fila de la base de dat
 
 
 @students_bp.route("/students", methods=["POST"]) # Definimos la ruta para crear un nuevo estudiante utilizando el método POST
-def create_student():
-    data = request.get_json() or {}
+def create_student():                             # Obtenemos el cuerpo de la solicitud como JSON y verificamos que contenga los campos obligatorios para crear un estudiante
+    data = request.get_json() or {}               
     if (
         not data.get("dni")
         or not data.get("name")
@@ -146,7 +146,7 @@ def delete_student(student_id):
 def bulk_insert_students():                                     # Obtenemos el cuerpo de la solicitud como JSON y verificamos que sea una lista de estudiantes
     data = request.get_json()
     if not isinstance(data, list):
-        return jsonify({"error": "El cuerpo debe ser una lista"}), 400
+        return jsonify({"error": "El cuerpo debe ser una lista"}), 400  # Verificamos que el cuerpo de la solicitud sea una lista de estudiantes
 
     conn = get_db_connection()                                  # Obtenemos la conexión a la base de datos
     cur = conn.cursor()
@@ -162,7 +162,7 @@ def bulk_insert_students():                                     # Obtenemos el c
             ):
                 continue
             cur.execute(
-                "INSERT INTO students (dni, name, age, grade, is_approved) VALUES (?, ?, ?, ?, ?)",
+                "INSERT INTO students (dni, name, age, grade, is_approved) VALUES (?, ?, ?, ?, ?)", # Ejecutamos la consulta SQL para insertar cada estudiante en la base de datos utilizando los valores proporcionados en la lista de estudiantes
                 (
                     item["dni"],
                     item["name"],
