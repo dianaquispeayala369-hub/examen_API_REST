@@ -8,16 +8,16 @@ from datetime import datetime # Importamos datetime para manejar las fechas de c
 students_bp = Blueprint("students", __name__) # Creamos un blueprint llamado "students" para organizar las rutas relacionadas con los estudiantes
 
 
-def serialize_student(row):
+def serialize_student(row): # Función para convertir una fila de la base de datos en un diccionario serializable a JSON
     return {
-        "id": row["id"],
-        "dni": row["dni"],
-        "name": row["name"],
-        "age": row["age"],
-        "grade": row["grade"],
-        "is_approved": bool(row["is_approved"]),
-        "created_at": row["created_at"],
-        "updated_at": row["updated_at"],
+        "id": row["id"],                           # Incluimos el ID del estudiante en la respuesta JSON
+        "dni": row["dni"],                         # Incluimos el DNI del estudiante en la respuesta JSON
+        "name": row["name"],                       # Incluimos el nombre del estudiante en la respuesta JSON
+        "age": row["age"],                         # Incluimos la edad del estudiante en la respuesta JSON
+        "grade": row["grade"],                     # Incluimos la nota del estudiante en la respuesta JSON
+        "is_approved": bool(row["is_approved"]),    # Convertimos el valor de is_approved a booleano para que sea más legible en la respuesta JSON
+        "created_at": row["created_at"],             # Incluimos la fecha de creación del estudiante en la respuesta JSON
+        "updated_at": row["updated_at"],           # Incluimos la fecha de última actualización del estudiante en la respuesta JSON
     }
 
 
