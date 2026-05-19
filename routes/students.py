@@ -1,11 +1,11 @@
 # Importando librerias necesarias
 
-from flask import Blueprint, request, jsonify, render_template
-from database.connection import get_db_connection
-import sqlite3
-from datetime import datetime
+from flask import Blueprint, request, jsonify, render_template # Importamos Blueprint para crear un módulo de rutas, request para manejar las solicitudes HTTP, jsonify para devolver respuestas JSON y render_template para servir plantillas HTML
+from database.connection import get_db_connection # Importamos la función para obtener la conexión a la base de datos
+import sqlite3 # Importamos sqlite3 para manejar errores de integridad y otras operaciones relacionadas con la base de datos
+from datetime import datetime # Importamos datetime para manejar las fechas de creación y actualización de los estudiantes
 
-students_bp = Blueprint("students", __name__)
+students_bp = Blueprint("students", __name__) # Creamos un blueprint llamado "students" para organizar las rutas relacionadas con los estudiantes
 
 
 def serialize_student(row):
@@ -140,6 +140,7 @@ def delete_student(student_id):
 
 
 # 6. Creación masiva / Bulk insert con (POST /students/bulk)
+
 @students_bp.route("/students/bulk", methods=["POST"])
 def bulk_insert_students():
     data = request.get_json()
