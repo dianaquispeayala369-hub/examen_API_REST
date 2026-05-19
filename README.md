@@ -28,6 +28,10 @@ uv init       # inicializando el entorno
 uv add Flask                   # Añadiendo flask
 uv run flask --app main run    # activando servidor
 
+# OPCIONAL, inicializando desde la terminal de VS code
+
+source /c/py/examen_API_REST/.venv/Scripts/activate
+uv run flask --app main.py run --debug
 ```
 
 
